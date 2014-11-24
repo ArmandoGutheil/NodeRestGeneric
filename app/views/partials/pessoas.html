@@ -1,0 +1,26 @@
+<a href="./#/" class="btn btn-primary" >Voltar</a>
+
+<hr>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Nome
+            </th>
+            <th>
+                Idade
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="pessoa in pessoas">
+            <td>{{ pessoa._id }}</td>
+            <td>{{ pessoa.name }}</td>
+            <td>{{ pessoa.cidade }}</td>
+        </tr>
+    </tbody>
+</table>
