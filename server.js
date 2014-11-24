@@ -52,7 +52,8 @@ passport.deserializeUser(function(user, done) {
 
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", req.get('origin'));
-  res.header("Access-Control-Allow-Credentials", true);
+  	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+ 	res.header("Access-Control-Allow-Credentials", true);
 
   next();
 });
@@ -102,7 +103,7 @@ var port = process.env.PORT || 8080;
 var router = express.Router();
 
 router.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", origin);
+	res.header("Access-Control-Allow-Origin", req.get('origin'));
   	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   	res.header("Access-Control-Allow-Credentials", 'true');
   	
