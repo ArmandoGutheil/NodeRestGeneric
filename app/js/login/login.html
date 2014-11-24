@@ -1,0 +1,19 @@
+<div class="formlogin">
+	<form name="formLogin" ng-submit="formLogin.$valid && login.doLogin()" ng-hide="logged" novalidate>
+	<fieldset class="form-group">
+		<input type="text" class="form-control"  name="username" ng-model="login.username" placeholder="User" required >
+	</fieldset>
+	<fieldset class="form-group">
+		<input type="password" class="form-control" name="password" ng-model="login.password" placeholder="Password" required />
+	</fieldset>
+	<fieldset class="form-group">
+		<input class="btn btn-primary pull-right" type="submit" value="Login" ng-disabled="!login.username.length > 0 || !login.password.length > 0"/>
+	</fieldset>
+	</form>
+	<fieldset class="form-group" ng-show="logged">
+		<input class="btn btn-secondary pull-right" type="button" ng-click="login.Pessoas()" value="Busca Pessoas" />
+	</fieldset>
+	<fieldset class="form-group" ng-show="logged">
+		<input class="btn btn-primary pull-right" type="button" ng-click="login.logout()" value="Logout" />
+	</fieldset>
+</div>
