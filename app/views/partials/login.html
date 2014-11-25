@@ -1,5 +1,5 @@
 <div class="formlogin">
-	<form name="formLogin" ng-submit="formLogin.$valid && loginCtrl.doLogin()" ng-hide="logged" novalidate>
+	<form name="formLogin" ng-submit="formLogin.$valid && loginCtrl.login()" ng-hide="logged" novalidate>
 	<fieldset class="form-group">
 		<input type="text" class="form-control"  name="username" ng-model="loginCtrl.username" placeholder="User" required >
 	</fieldset>
@@ -10,5 +10,4 @@
 		<input class="btn btn-primary pull-right" type="submit" value="Login" ng-disabled="!loginCtrl.username.length > 0 || !loginCtrl.password.length > 0"/>
 	</fieldset>
 	</form>
-	
 </div>

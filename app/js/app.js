@@ -8,32 +8,103 @@ config(['$httpProvider', function($httpProvider) {
 
 config(function($routeProvider){
     $routeProvider.
-    when('/', {templateUrl: 'views/menu.html', controller: "menuController", controllerAs: "menuCtrl"}).
+    
     when('/login', {templateUrl: 'views/partials/login.html', controller: "loginController", controllerAs: "loginCtrl"}).
-    when('/pessoas', {templateUrl: 'views/partials/pessoas.html', controller: "pessoasController", controllerAs: "pessoasCtrl"}).
+    
+    when('/', {templateUrl: 'views/partials/pessoas.html', controller: "pessoasController", controllerAs: "pessoasCtrl"}).
+    
     otherwise({redirectTo: '/'})
 }).
 
-controller("menuController", ['$http', '$scope', '$location', function($http, $scope, $location){
-    this.initEvent = function()
-    {
-         $http.get('http://localhost:8080/login').
-          success(function(data, status, headers, config) {
-            $scope.logged = data;
-            
-            if(!$scope.logged)
-                $location.path('/login');
-          }).
-          error(function(data, status, headers, config) {
-          });
-    }
+factory('AuthenticationService',  ['$http', '$location', function($http, $location){
     
-    this.initEvent();
+    var Service = {};
+    
+    Service.setAuthentication = function(value)
+    {
+        Service.authenticated = value;
+        
+        if(!Service.authenticated)
+            $location.path('/login');
+    };
+    
+    Service.checkStatus = function()
+    {
+        $http.get('http://localhost:8080/login').
+        
+        success(function(data, status, headers, config) {
+                Service.setAuthentication(data);
+        }).
+        
+        error(function(data, status, headers, config) {
+        });
+        
+    };
+    
+    Service.logout = function()
+    {
+        var req = {
+            method: 'GET',
+            url: 'http://localhost:8080/logout'
+        }
+
+        $http(req)
+        .success(function(data){
+            Service.setAuthentication(data)
+        })
+        .error(function(){
+
+        });
+    };    
+    
+    Service.login = function(username, password)
+    {
+        var req = {
+            method: 'POST',
+            url: 'http://localhost:8080/login',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            crossDomain: true, 
+            dataType: 'jsonp',
+            data: {
+                username: username, 
+                password: password
+            }
+        }
+
+        $http(req)
+        
+        .success(function(data){
+            Service.setAuthentication(data);
+            
+            if(Service.authenticated)
+                $location.path("/");
+        })
+        
+        .error(function(){
+            alert("error");
+        });
+    };
+    
+    return Service;
 }]).
 
-controller("pessoasController", ['$http', '$scope', function($http, $scope){
+controller("menuController", ['$http', '$scope', '$location', 'AuthenticationService', function($http, $scope, $location, AuthenticationService){
     
-    this.initEvent = function()
+    AuthenticationService.checkStatus();
+    
+    this.logout = function()
+    {
+        AuthenticationService.logout();
+    }
+}]).
+
+controller("pessoasController", ['$http', '$scope', 'AuthenticationService', function($http, $scope, AuthenticationService){
+    
+    AuthenticationService.checkStatus();
+    
+    this.returnPessoas = function()
     {
          var req = {
             method: 'GET',
@@ -46,82 +117,35 @@ controller("pessoasController", ['$http', '$scope', function($http, $scope){
         }
 
         $http(req)
+        
         .success(function(data){
             $scope.pessoas = data;
         })
+        
         .error(function(){
 
         });
     };
     
-    this.initEvent();
+    this.returnPessoas();
 }]).
 
-controller("loginController", ['$http', '$scope', '$location', function($http, $scope, $location){
+controller("loginController", ['$http', '$scope', '$location', 'AuthenticationService', function($http, $scope, $location, AuthenticationService){
         
     this.username = "";
     this.password = "";
 
-    $scope.setLogged = function(value)
+    this.login = function()
     {
-        $scope.logged = value;
-        
-        $location.path($scope.logged ? '/' : '/login');
+       AuthenticationService.login(this.username, this.password);
     };
-    
-    $scope.isLogged = function()
-    {
-        $http.get('http://localhost:8080/login').
-        
-        success(function(data, status, headers, config) {
-                $scope.setLogged(data);
-        }).
-        
-        error(function(data, status, headers, config) {
-        });
-        
-    };
+}])
 
-    $scope.isLogged();
-    
-    this.logout = function()
-    {
-        var req = {
-            method: 'GET',
-            url: 'http://localhost:8080/logout'
-        }
-
-        $http(req)
-        .success(function(data){
-            $scope.setLogged(data)
-        })
-        .error(function(){
-
-        });
-    };
-
-    this.doLogin = function()
-    {
-        var req = {
-            method: 'POST',
-            url: 'http://localhost:8080/login',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            crossDomain: true, 
-            dataType: 'jsonp',
-            data: {
-                username: this.username, 
-                password: this.password
-            }
-        }
-
-        $http(req)
-        .success(function(data){
-            $scope.setLogged(data);
-        })
-        .error(function(){
-            alert("error");
-        });
-    };
-}]);
+.directive("menuDirective", function(){
+    return{
+        restrict: "E",
+        templateUrl: "views/partials/menu.html",
+        controller: "menuController",
+        controllerAs: "menuCtrl"
+    }
+})
