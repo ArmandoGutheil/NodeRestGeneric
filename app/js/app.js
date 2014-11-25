@@ -1,3 +1,5 @@
+var url = "http://localhost:8080/";
+
 var app = angular.module("APP", ['ngRoute']).
 
 config(['$httpProvider', function($httpProvider) {
@@ -30,14 +32,15 @@ factory('AuthenticationService',  ['$http', '$location', function($http, $locati
     
     Service.checkStatus = function()
     {
-        $http.get('http://localhost:8080/login').
-        
-        success(function(data, status, headers, config) {
-                Service.setAuthentication(data);
-        }).
-        
-        error(function(data, status, headers, config) {
-        });
+        $http.get(url + 'login')
+        .then(
+            function(response) {
+                Service.setAuthentication(response.data);
+            },
+            function(error) {
+                alert(error)
+            }
+        );
         
     };
     
@@ -45,23 +48,25 @@ factory('AuthenticationService',  ['$http', '$location', function($http, $locati
     {
         var req = {
             method: 'GET',
-            url: 'http://localhost:8080/logout'
+            url: url + 'logout'
         }
 
         $http(req)
-        .success(function(data){
-            Service.setAuthentication(data)
-        })
-        .error(function(){
-
-        });
+        .then(
+            function(response) {
+                Service.setAuthentication(response.data);
+            },
+            function(error) {
+                alert(error)
+            }
+        );
     };    
     
     Service.login = function(username, password)
     {
         var req = {
             method: 'POST',
-            url: 'http://localhost:8080/login',
+            url: url + 'login',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -74,17 +79,18 @@ factory('AuthenticationService',  ['$http', '$location', function($http, $locati
         }
 
         $http(req)
-        
-        .success(function(data){
-            Service.setAuthentication(data);
+        .then(
+            function(response) {
+                Service.setAuthentication(response.data);
             
-            if(Service.authenticated)
-                $location.path("/");
-        })
+                if(Service.authenticated)
+                    $location.path("/");
+            },
+            function(error) {
+                alert(error)
+            }
+        );
         
-        .error(function(){
-            alert("error");
-        });
     };
     
     return Service;
@@ -104,11 +110,36 @@ controller("pessoasController", ['$http', '$scope', 'AuthenticationService', fun
     
     AuthenticationService.checkStatus();
     
+    this.delete = function(index)
+    {
+        var req = {
+            method: 'DELETE',
+            url: url + 'api/pessoas/' + $scope.pessoas[index]._id,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            crossDomain: true, 
+            dataType: 'jsonp'
+        }
+        
+        $http(req)
+        .then(
+            function(response) {
+                $scope.pessoas.splice(index, 1);
+                
+                alert(response.data.message)
+            },
+            function(error) {
+                console.log(error)
+            }
+        );
+    };
+    
     this.returnPessoas = function()
     {
          var req = {
             method: 'GET',
-            url: 'http://localhost:8080/api/pessoas',
+            url: url + 'api/pessoas',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -117,14 +148,14 @@ controller("pessoasController", ['$http', '$scope', 'AuthenticationService', fun
         }
 
         $http(req)
-        
-        .success(function(data){
-            $scope.pessoas = data;
-        })
-        
-        .error(function(){
-
-        });
+        .then(
+            function(response) {
+                $scope.pessoas = response.data;
+            },
+            function(error) {
+                console.log(error)
+            }
+        );
     };
     
     this.returnPessoas();

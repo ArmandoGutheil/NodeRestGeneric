@@ -14,6 +14,8 @@
             <th>
                 Cidade
             </th>
+            <th>
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +23,7 @@
             <td>{{ pessoa._id }}</td>
             <td>{{ pessoa.name }}</td>
             <td>{{ pessoa.cidade }}</td>
+            <td><a ng-click="pessoasCtrl.delete($index)">Remover</a> <a ng-click="">Editar</a> </td>
         </tr>
     </tbody>
 </table>
