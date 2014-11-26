@@ -111,12 +111,12 @@ router.use(function(req, res, next) {
     next();
 });
 
-router.route('/:type')
+router.route('/crud/:type')
 
 	.get(isLoggedIn, function(req, res) {
 		if(models[req.params.type] === undefined)
 		{
-			res.json({ message: req.params.type + ' is undefined!' });			
+			res.json({ message: req.params.type + ' is Undefined!' });			
 		}
 		else
 			models[req.params.type].find(function(err, results) {
@@ -130,7 +130,7 @@ router.route('/:type')
 	.post(isLoggedIn, function(req, res) { 
 		if(models[req.params.type] === undefined)
 		{
-			res.json({ message: req.params.type + ' is undefined!' });			
+			res.json({ message: req.params.type + ' is Undefined!' });			
 		}
 		else
 		{
@@ -153,12 +153,12 @@ router.route('/:type')
 		}
 	})
 
-router.route('/:type/:id')
+router.route('/crud/:type/:id')
 
 	.get(isLoggedIn, function(req, res) {
 		if(models[req.params.type] === undefined)
 		{
-			res.json({ message: req.params.type + ' is undefined!' });			
+			res.json({ message: req.params.type + ' is Undefined!' });			
 		}
 		else
 			models[req.params.type].findById(req.params.id, function(err, result) {
@@ -172,7 +172,7 @@ router.route('/:type/:id')
 	.put(isLoggedIn, function(req, res) {
 		if(models[req.params.type] === undefined)
 		{
-			res.json({ message: req.params.type + ' is undefined!' });			
+			res.json({ message: req.params.type + ' is Undefined!' });			
 		}
 		else
 			models[req.params.type].findById(req.params.id, function(err, result) {
@@ -200,7 +200,7 @@ router.route('/:type/:id')
 	.delete(isLoggedIn, function(req, res) {
 		if(models[req.params.type] === undefined)
 		{
-			res.json({ message: req.params.type + ' is undefined!' });			
+			res.json({ message: req.params.type + ' is Undefined!' });			
 		}
 		else
 			models[req.params.type].remove({
@@ -209,7 +209,7 @@ router.route('/:type/:id')
 				if (err)
 					res.send(err);
 
-				res.json({ message: 'Successfully deleted' });
+				res.json({ message: req.params.type + ' Deleted' });
 			});
 	});
 
